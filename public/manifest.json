@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Libby Goodreads Importer",
+  "name": "Import Libby data into Goodreads",
   "icons": [
     {
       "src": "favicon.ico",
