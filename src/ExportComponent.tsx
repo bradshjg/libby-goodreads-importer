@@ -43,10 +43,12 @@ export default function ExportComponent() {
     });
   }
 
-  const exportCSV = async () => {
-    if (!importFile) return
+  const parseCSV = async (importFile: File) => {
     const importCSVText = await readFile(importFile) as string
-    const libbyImport = parse(importCSVText, {columns: true, skip_empty_lines: true}) as LibbyImportItem[]
+    return parse(importCSVText, {columns: true, skip_empty_lines: true}) as LibbyImportItem[]
+  }
+
+  const transformCSV = (libbyImport: LibbyImportItem[]) => {
     const goodreadsExport: GoodreadsExport = {}
     for (const libbyItem of libbyImport) {
       const dateParser = timeParse('%B %d, %Y %H:%M')
@@ -54,29 +56,31 @@ export default function ExportComponent() {
       const activityDate = dateParser(libbyItem.timestamp)
       if (!activityDate) continue
       const isbn = libbyItem['isbn']
+      const formattedActivityDate = dateFormatter(activityDate)
       const item = goodreadsExport[isbn] || {
         'Title': libbyItem['title'],
         'Author': libbyItem['author'],
         'Publisher': libbyItem['publisher'],
         'ISBN': libbyItem['isbn'],
       }
-      let goodreadsItem: GoodreadsExportItem = item
       if (libbyItem['activity'] === 'Borrowed') {
-        goodreadsItem = Object.assign(item, {
-            'Date Added': dateFormatter(activityDate),
-            'Shelves': 'currently-reading'
-        })
+        item['Date Added'] = formattedActivityDate
+        if (item['Shelves'] !== 'read') {
+          item['Shelves'] = 'currently-reading'
+        }
       }
-      if (libbyItem['activity'] === 'Returned')
-        goodreadsItem = Object.assign(item, {
-          'Date Read': dateFormatter(activityDate),
-          'Shelves': 'read'
-        })
-      if (goodreadsItem) goodreadsExport[isbn] = goodreadsItem
+      if (libbyItem['activity'] === 'Returned') {
+        item['Date Added'] = formattedActivityDate
+        item['Shelves'] = 'read'
+      }
+      goodreadsExport[isbn] = item
     }
-    const goodreadsExportValues = Object.values(goodreadsExport)
-    const csvExport = stringify(
-      goodreadsExportValues,
+    return Object.values(goodreadsExport)
+  }
+
+  const generateCSV = (goodreadsExport: GoodreadsExportItem[]) => {
+    return stringify(
+      goodreadsExport,
       {
         header: true,
         columns: [
@@ -97,12 +101,22 @@ export default function ExportComponent() {
         ]
       }
     )
-    var data = new Blob([csvExport], {type: 'text/csv'});
-    var csvURL = window.URL.createObjectURL(data);
+  }
+
+  const startDownload = (goodreadsExport: string) => {
+    const data = new Blob([goodreadsExport], {type: 'text/csv'});
+    const csvURL = window.URL.createObjectURL(data);
     const tempLink = document.createElement('a');
     tempLink.href = csvURL;
     tempLink.setAttribute('download', 'export.csv');
     tempLink.click();
+  }
+
+  const exportCSV = async () => {
+    if (!importFile) return
+    const libbyImport = await parseCSV(importFile)
+    const goodreadsExport = generateCSV(transformCSV(libbyImport))
+    startDownload(goodreadsExport)
   }
 
   return (
