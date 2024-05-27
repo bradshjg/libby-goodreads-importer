@@ -1,13 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
-import UploadComponent from './ExportComponent';
+import ConversionFormComponent from './ConversionFormComponent';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <UploadComponent />
+        <ConversionFormComponent />
       </header>
     </div>
   );
