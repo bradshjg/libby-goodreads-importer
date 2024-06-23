@@ -1,7 +1,7 @@
 import {parse} from 'csv-parse/browser/esm/sync'
 import {stringify} from 'csv-stringify/browser/esm/sync'
 import {timeFormat, timeParse} from 'd3-time-format'
-import type {LibbyImportItem, GoodreadsExport, GoodreadsExportItem} from './types'
+import type {GoodreadsExport, GoodreadsExportItem, LibbyImportItem, Timeframe} from './types'
 
 export const readFile = (file: File) => {
     return new Promise((resolve, reject) => {
@@ -19,7 +19,7 @@ export const parseCSV = async (importFile: File) => {
     return parse(importCSVText, {columns: true, skip_empty_lines: true}) as LibbyImportItem[]
   }
 
-export const transformCSV = (libbyImport: LibbyImportItem[]) => {
+export const transformCSV = (libbyImport: LibbyImportItem[], timeframe?: Timeframe) => {
     const goodreadsExport: GoodreadsExport = {}
     for (const libbyItem of libbyImport) {
       const dateParser = timeParse('%B %d, %Y %H:%M')

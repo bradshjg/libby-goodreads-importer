@@ -20,3 +20,5 @@ export interface GoodreadsExportItem {
 export interface GoodreadsExport {
     [isbn: string]: GoodreadsExportItem
   }
+
+export type Timeframe = 'all-time' | 'last-month' | 'last-year'

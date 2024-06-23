@@ -1,9 +1,11 @@
 import React from 'react'
+import type {Timeframe} from './types'
 import {generateCSV, parseCSV, transformCSV} from './utils'
 import { FileUpload } from './FileUpload'
 
 export default function ConversionForm() {
   const [importFile, setImportFile] = React.useState<File>()
+  const [timeframe, setTimeframe] = React.useState('all-time' as Timeframe)
 
   const startDownload = (goodreadsExport: string) => {
     const data = new Blob([goodreadsExport], {type: 'text/csv'});
@@ -18,7 +20,7 @@ export default function ConversionForm() {
     console.log(importFile)
     if (!importFile) return
     const libbyImport = await parseCSV(importFile)
-    const goodreadsExport = generateCSV(transformCSV(libbyImport))
+    const goodreadsExport = generateCSV(transformCSV(libbyImport, timeframe))
     startDownload(goodreadsExport)
   }
 
@@ -27,12 +29,20 @@ export default function ConversionForm() {
         <p>
             <ol>
                 <li><a href="https://help.libbyapp.com/en-us/6207.htm">Download Libby activity CSV</a></li>
-                <li>Convert to goodreads format</li>
+                <li>Convert to goodreads format (below)</li>
                 <li><a href="https://help.goodreads.com/s/article/How-do-I-import-or-export-my-books-1553870934590">Import into goodreads</a></li>
             </ol>
         </p>
         <FileUpload onFileChange={setImportFile}/>
-        <button onClick={exportCSV} style={{marginTop: '2em'}}>Download goodreads CSV</button>
+        <label>
+            Timeframe:
+            <select onChange={(e) => setTimeframe(e.target.value as Timeframe)} style={{marginLeft: '1em', marginTop: '1em'}}>
+                <option value='all-time'>All time</option>
+                <option value='last-year'>Last year</option>
+                <option value='last-month'>Last month</option>
+            </select>
+        </label>
+        <button onClick={exportCSV} style={{marginTop: '1em'}}>Download goodreads CSV</button>
     </div>
   )
 }
