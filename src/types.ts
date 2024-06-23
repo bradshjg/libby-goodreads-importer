@@ -5,6 +5,7 @@ export interface LibbyImportItem {
     isbn: string,
     activity: string
     timestamp: string
+    details?: string
   }
 
 export interface GoodreadsExportItem {
@@ -17,8 +18,8 @@ export interface GoodreadsExportItem {
     Shelves?: string
   }
 
-export interface GoodreadsExport {
-    [isbn: string]: GoodreadsExportItem
+export interface LibbyImport {
+    [isbn: string]: LibbyImportItem
   }
 
 export type Timeframe = 'all-time' | 'last-month' | 'last-year'

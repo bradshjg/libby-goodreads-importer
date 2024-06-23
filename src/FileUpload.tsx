@@ -41,9 +41,12 @@ export const FileUpload = ({onFileChange}: FileUploadProps) => {
     onDragOver: stopDefaults,
     onDrop: (e: React.DragEvent<HTMLElement>) => {
       stopDefaults(e)
-      setLabelText(hoverLabel)
       setIsDragOver(false)
-      onFileChange(e.dataTransfer.files[0])
+      if (!e.dataTransfer.files) return
+      const file = e.dataTransfer.files[0]
+      if (!file) return
+      setLabelText(file.name)
+      onFileChange(file)
     },
   }
 
