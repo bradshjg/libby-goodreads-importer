@@ -25,6 +25,7 @@ const dateFormatter = timeFormat('%Y-%m-%d')
 const convertLibbyImportItem = (libbyItem: LibbyImportItem) => {
   const activityDate = dateParser(libbyItem.timestamp)
   if (!activityDate) return
+  if (libbyItem['activity'] !== 'Borrowed' && libbyItem['activity'] !== 'Returned') return
   const formattedActivityDate = dateFormatter(activityDate)
   const goodReadsItem: GoodreadsExportItem = {
     'Title': libbyItem['title'],
