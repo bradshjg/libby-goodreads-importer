@@ -1,14 +1,15 @@
 import logo from './logo.svg';
-import './App.css';
-import ConversionFormComponent from './ConversionFormComponent';
+import ConversionForm from './ConversionForm';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <ConversionFormComponent />
+    <div>
+      <header style={{display: 'flex', justifyContent: 'center'}}>
+        <img src={logo} alt="logo" style={{width: '200px', height: '200px'}} />
       </header>
+      <p>
+        <ConversionForm />
+      </p>
     </div>
   );
 }
