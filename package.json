@@ -54,5 +54,6 @@
     "transformIgnorePatterns": [
       "node_modules/(?!d3-array|d3-time|d3-time-format|internmap/)"
     ]
-  }
+  },
+  "homepage": "/libby-goodreads-importer"
 }
