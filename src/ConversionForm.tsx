@@ -26,23 +26,21 @@ export default function ConversionForm() {
 
   return (
     <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-        <p>
-            <ol>
-                <li><a href="https://help.libbyapp.com/en-us/6207.htm">Download Libby activity CSV</a></li>
-                <li>Convert to goodreads format (below)</li>
-                <li><a href="https://help.goodreads.com/s/article/How-do-I-import-or-export-my-books-1553870934590">Import into goodreads</a></li>
-            </ol>
-        </p>
-        <FileUpload onFileChange={setImportFile}/>
-        <label>
-            Timeframe:
-            <select onChange={(e) => setTimeframe(e.target.value as Timeframe)} style={{marginLeft: '1em', marginTop: '1em'}}>
-                <option value='all-time'>All time</option>
-                <option value='last-year'>Last year</option>
-                <option value='last-month'>Last month</option>
-            </select>
-        </label>
-        <button onClick={exportCSV} style={{marginTop: '1em'}}>Download goodreads CSV</button>
+      <ol>
+        <li><a href="https://help.libbyapp.com/en-us/6207.htm">Download Libby activity CSV</a></li>
+        <li>Convert to goodreads format (below)</li>
+        <li><a href="https://help.goodreads.com/s/article/How-do-I-import-or-export-my-books-1553870934590">Import into goodreads</a></li>
+      </ol>
+      <FileUpload onFileChange={setImportFile}/>
+      <label>
+        Timeframe:
+        <select onChange={(e) => setTimeframe(e.target.value as Timeframe)} style={{marginLeft: '1em', marginTop: '1em'}}>
+          <option value='all-time'>All time</option>
+          <option value='last-year'>Last year</option>
+          <option value='last-month'>Last month</option>
+        </select>
+      </label>
+      <button onClick={exportCSV} style={{marginTop: '1em'}}>Download goodreads CSV</button>
     </div>
   )
 }

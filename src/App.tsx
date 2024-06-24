@@ -7,9 +7,7 @@ function App() {
       <header style={{display: 'flex', justifyContent: 'center'}}>
         <img src={logo} alt="logo" style={{width: '200px', height: '200px'}} />
       </header>
-      <p>
-        <ConversionForm />
-      </p>
+      <ConversionForm />
     </div>
   );
 }
