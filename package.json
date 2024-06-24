@@ -3,13 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.97",
-    "@types/react": "^18.3.2",
-    "@types/react-dom": "^18.3.0",
     "csv-parse": "^5.5.6",
     "csv-stringify": "^6.5.0",
     "d3-time-format": "^4.1.0",
@@ -44,6 +37,22 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@types/d3-time-format": "^4.0.3"
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/d3-time-format": "^4.0.3",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.8",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^csv-parse": "<rootDir>/node_modules/csv-parse/dist/cjs/sync.cjs",
+      "^csv-stringify": "<rootDir>/node_modules/csv-stringify/dist/cjs/sync.cjs"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!d3-array|d3-time|d3-time-format|internmap/)"
+    ]
   }
 }
