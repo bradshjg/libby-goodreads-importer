@@ -1,7 +1,7 @@
 import {parse} from 'csv-parse/browser/esm/sync'
 import {stringify} from 'csv-stringify/browser/esm/sync'
 import {timeFormat, timeParse} from 'd3-time-format'
-import type {GoodreadsExportItem, LibbyImport, LibbyImportItem, Timeframe} from './types'
+import {Activity, GenericItem, GoodreadsExportItem, LibbyImportItem, Timeframe} from './types'
 
 export const readFile = (file: File) => {
     return new Promise((resolve, reject) => {
@@ -22,43 +22,9 @@ export const parseCSV = async (importFile: File) => {
 const dateParser = timeParse('%B %d, %Y %H:%M')
 const dateFormatter = timeFormat('%Y-%m-%d')
 
-const convertLibbyImportItem = (libbyItem: LibbyImportItem) => {
-  const activityDate = dateParser(libbyItem.timestamp)
-  if (!activityDate) return
-  const formattedActivityDate = dateFormatter(activityDate)
-  const goodReadsItem: GoodreadsExportItem = {
-    'Title': libbyItem['title'],
-    'Author': libbyItem['author'],
-    'Publisher': libbyItem['publisher'],
-    'ISBN': libbyItem['isbn'],
-  }
-  switch (libbyItem['activity']) {
-    case 'Borrowed':
-      if (libbyItem['details'] === '') {
-        goodReadsItem['Shelves'] = 'read'
-        goodReadsItem['Date Read'] = formattedActivityDate
-      } else {
-        goodReadsItem['Shelves'] = 'currently-reading'
-        goodReadsItem['Date Added'] = formattedActivityDate
-      }
-      break;
-    case 'Returned':
-      goodReadsItem['Shelves'] = 'read'
-      goodReadsItem['Date Read'] = formattedActivityDate
-      break;
-    case 'Placed on hold':
-      goodReadsItem['Shelves'] = 'to-read'
-      goodReadsItem['Date Added'] = formattedActivityDate
-      break;
-  }
-  return goodReadsItem
-}
+const getCutoffDate = (timeframe: Timeframe | undefined) => {
+  if (!timeframe) return
 
-function isTruthy<T>(value?: T | undefined | null | false): value is T {
-  return !!value
-}
-
-function getCutoffDate(timeframe?: Timeframe): Date | undefined {
   let cutoff: Date | undefined = new Date()
   switch(timeframe) {
     case 'all-time':
@@ -76,34 +42,73 @@ function getCutoffDate(timeframe?: Timeframe): Date | undefined {
   return cutoff
 }
 
-export const transformCSV = (libbyImportItems: LibbyImportItem[], timeframe?: Timeframe) => {
-    const cutoff = getCutoffDate(timeframe)
-    const cutoffFilter = (item: LibbyImportItem) => {
-      const timestamp = dateParser(item.timestamp)
-      if (!timestamp) return false
-      if (!cutoff) return true
-      return timestamp > cutoff
-    }
-    const eventFilter = (item: LibbyImportItem) => {
-      return ['Returned', 'Borrowed', 'Placed on hold'].includes(item.activity)
-    }
-    const filteredLibbyImportItems = libbyImportItems.filter((item) => {
-      return cutoffFilter(item) && eventFilter(item)
-    })
+const getActivity = (libbyItem: LibbyImportItem): Activity | undefined => {
+  let activity: Activity | undefined
+  switch (libbyItem['activity']) {
+    case 'Borrowed':
+      if (!!libbyItem['details']) {
+        activity = Activity.CurrentlyReading
+      } else {
+        activity = Activity.Read
+      }
+      break;
+    case 'Returned':
+      activity = Activity.Read
+      break;
+    case 'Placed on hold':
+      activity = Activity.ToRead
+      break;
+  }
+  return activity
+}
 
-    const sortedLibbyImportItems = [...filteredLibbyImportItems].sort((a, b) => {
-      const aTimestamp = dateParser(a.timestamp) as Date
-      const bTimestamp = dateParser(b.timestamp) as Date
-      return aTimestamp < bTimestamp ? -1 : 1
-    })
+const getGenericItem = (libbyItem: LibbyImportItem, cutoffDate?: Date): GenericItem | undefined => {
+  const activityDate = dateParser(libbyItem.timestamp)
+  if (!activityDate || (cutoffDate && activityDate < cutoffDate)) return
+  const activity = getActivity(libbyItem)
+  if (!activity) return
 
-    // last event wins!
-    const libbyImport: LibbyImport = {}
-    for (const item of sortedLibbyImportItems) {
-      if (!item.isbn) continue
-      libbyImport[item.isbn] = item
+  const item: GenericItem = {
+    timestamp: activityDate,
+    activity: activity,
+    title: libbyItem['title'],
+    author: libbyItem['author'],
+    publisher: libbyItem['publisher'],
+    isbn: libbyItem['isbn'],
+  }
+  return item
+}
+
+const getGoodReadsItem = (genericItem: GenericItem): GoodreadsExportItem => {
+  const formattedDate = dateFormatter(genericItem.timestamp)
+  return {
+    Title: genericItem.title,
+    Author: genericItem.author,
+    Publisher: genericItem.publisher,
+    ISBN: genericItem.isbn,
+    Shelves: genericItem.activity,
+    "Date Added": formattedDate,
+    "Date Read": genericItem.activity === Activity.Read ? formattedDate : '',
+  }
+}
+
+export const transformCSV = (libbyImportItems: LibbyImportItem[], timeframe?: Timeframe): GoodreadsExportItem[] => {
+  const genericItems = libbyImportItems.flatMap((libbyItem) => {
+    const item = getGenericItem(libbyItem, getCutoffDate(timeframe))
+    return item ? [item] : []
+  })
+  const sortedGenericItems = genericItems.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+
+  const seenISBNs = new Set()
+  const lastEventGenericItems: GenericItem[] = []
+
+  for (const item of sortedGenericItems) {
+    if (!seenISBNs.has(item.isbn)) {
+      lastEventGenericItems.push(item);
+      seenISBNs.add(item.isbn);
     }
-    return Object.values(libbyImport).map(convertLibbyImportItem).filter(isTruthy)
+  }
+  return lastEventGenericItems.map(getGoodReadsItem)
   }
 
 export const generateCSV = (goodreadsExport: GoodreadsExportItem[]) => {
