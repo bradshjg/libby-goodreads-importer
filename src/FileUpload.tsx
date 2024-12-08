@@ -5,11 +5,12 @@ const dropLabel = 'Drop file here'
 const accept = 'text/csv'
 
 interface FileUploadProps {
+  file: File | undefined
   onFileChange: (f: File | undefined) => void
 }
 
-export const FileUpload = ({onFileChange}: FileUploadProps) => {
-  const [labelText, setLabelText] = React.useState<string>(hoverLabel)
+export const FileUpload = ({file, onFileChange}: FileUploadProps) => {
+  const [labelText, setLabelText] = React.useState<string>(file?.name || hoverLabel)
   const [isDragOver, setIsDragOver] = React.useState<boolean>(false)
   const [isMouseOver, setIsMouseOver] = React.useState<boolean>(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
@@ -44,8 +45,6 @@ export const FileUpload = ({onFileChange}: FileUploadProps) => {
       setIsDragOver(false)
       if (!e.dataTransfer.files) return
       const file = e.dataTransfer.files[0]
-      if (!file) return
-      setLabelText(file.name)
       onFileChange(file)
     },
   }
@@ -53,8 +52,6 @@ export const FileUpload = ({onFileChange}: FileUploadProps) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return
     const file = e.target.files[0]
-    if (!file) return
-    setLabelText(file.name)
     onFileChange(file)
   }
 
