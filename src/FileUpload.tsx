@@ -1,16 +1,16 @@
 import React from 'react'
+import logo from './logo.svg';
 
 const hoverLabel = 'Click or drag to upload Libby activity CSV'
 const dropLabel = 'Drop file here'
 const accept = 'text/csv'
 
 interface FileUploadProps {
-  file: File | undefined
   onFileChange: (f: File | undefined) => void
 }
 
-export const FileUpload = ({file, onFileChange}: FileUploadProps) => {
-  const [labelText, setLabelText] = React.useState<string>(file?.name || hoverLabel)
+export const FileUpload = ({onFileChange}: FileUploadProps) => {
+  const [labelText, setLabelText] = React.useState<string>(hoverLabel)
   const [isDragOver, setIsDragOver] = React.useState<boolean>(false)
   const [isMouseOver, setIsMouseOver] = React.useState<boolean>(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
@@ -57,6 +57,14 @@ export const FileUpload = ({file, onFileChange}: FileUploadProps) => {
 
   return (
     <>
+      <header style={{display: 'flex', justifyContent: 'center'}}>
+        <img src={logo} alt="logo" style={{width: '200px', height: '200px'}} />
+      </header>
+      <ol>
+        <li><a href="https://help.libbyapp.com/en-us/6207.htm">Download Libby activity CSV</a></li>
+        <li>Convert to goodreads format (below)</li>
+        <li><a href="https://help.goodreads.com/s/article/How-do-I-import-or-export-my-books-1553870934590">Import into goodreads</a></li>
+      </ol>
       <div
         {...uploadEvents}
         style={{

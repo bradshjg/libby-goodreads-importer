@@ -22,9 +22,7 @@ export const parseCSV = async (importFile: File) => {
 const dateParser = timeParse('%B %d, %Y %H:%M')
 const dateFormatter = timeFormat('%Y-%m-%d')
 
-const getCutoffDate = (timeframe: Timeframe | undefined) => {
-  if (!timeframe) return
-
+const getCutoffDate = (timeframe: Timeframe) => {
   let cutoff: Date | undefined = new Date()
   switch(timeframe) {
     case 'all-time':
@@ -62,11 +60,11 @@ const getActivity = (libbyItem: LibbyImportItem): Activity | undefined => {
   return activity
 }
 
-const getGenericItem = (libbyItem: LibbyImportItem, cutoffDate?: Date): GenericItem | undefined => {
+const getGenericItem = (libbyItem: LibbyImportItem): GenericItem | undefined => {
   const activityDate = dateParser(libbyItem.timestamp)
-  if (!activityDate || (cutoffDate && activityDate < cutoffDate)) return
+  if (!activityDate) { return }
   const activity = getActivity(libbyItem)
-  if (!activity) return
+  if (!activity) { return}
 
   const item: GenericItem = {
     timestamp: activityDate,
@@ -92,11 +90,8 @@ const getGoodReadsItem = (genericItem: GenericItem): GoodreadsExportItem => {
   }
 }
 
-export const transformCSV = (libbyImportItems: LibbyImportItem[], timeframe?: Timeframe): GoodreadsExportItem[] => {
-  const genericItems = libbyImportItems.flatMap((libbyItem) => {
-    const item = getGenericItem(libbyItem, getCutoffDate(timeframe))
-    return item ? [item] : []
-  })
+export const transformCSV = (libbyImportItems: LibbyImportItem[]): GenericItem[] => {
+  const genericItems = libbyImportItems.map(getGenericItem).filter((item): item is GenericItem => !!item)
   const sortedGenericItems = genericItems.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
 
   const seenISBNs = new Set()
@@ -108,12 +103,17 @@ export const transformCSV = (libbyImportItems: LibbyImportItem[], timeframe?: Ti
       seenISBNs.add(item.isbn);
     }
   }
-  return lastEventGenericItems.map(getGoodReadsItem)
+  return lastEventGenericItems
   }
 
-export const generateCSV = (goodreadsExport: GoodreadsExportItem[]) => {
+export const filterActivities = (genericItems: GenericItem[], timeframe: Timeframe) => {
+  const cutoffDate = getCutoffDate(timeframe)
+  return !!cutoffDate ? genericItems.filter((item) => item.timestamp > cutoffDate) : genericItems
+}
+
+export const generateCSV = (genericItems: GenericItem[]) => {
     return stringify(
-      goodreadsExport,
+      genericItems.map(getGoodReadsItem),
       {
         header: true,
         columns: [

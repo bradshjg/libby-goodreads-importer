@@ -1,14 +1,21 @@
 import React from 'react'
-import type {Timeframe} from './types'
-import {generateCSV, parseCSV, transformCSV} from './utils'
+import {GenericItem, type Timeframe} from './types'
+import {generateCSV, filterActivities} from './utils'
 
 interface EditUploadProps {
-  file: File
+  items: GenericItem[]
   onClose: () => void
 }
 
-export const EditUpload = ({file, onClose}: EditUploadProps) => {
+export const EditUpload = ({items, onClose}: EditUploadProps) => {
   const [timeframe, setTimeframe] = React.useState('all-time' as Timeframe)
+
+  const filteredItems = React.useMemo(
+    () => {
+      return filterActivities(items, timeframe)
+    },
+    [items, timeframe],
+  )
   
   const startDownload = (goodreadsExport: string) => {
     const data = new Blob([goodreadsExport], {type: 'text/csv'});
@@ -20,25 +27,15 @@ export const EditUpload = ({file, onClose}: EditUploadProps) => {
   }
 
   const exportCSV = async () => {
-    const libbyImport = await parseCSV(file)
-    const goodreadsExport = generateCSV(transformCSV(libbyImport, timeframe))
+    const goodreadsExport = generateCSV(items)
     startDownload(goodreadsExport)
   }
 
-  const modalStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: '10%',
-    bottom: '10%',
-    left: '10%',
-    width: '80%',
-    backgroundColor: 'white',
-    border: '2px solid rgb(240, 240, 240)',
-    borderRadius: '12px',
-    boxShadow: 'rgba(100, 100, 111, 0.3) 0px 7px 29px 0px',
-  }
-
   return (
-    <div style={modalStyle}>
+    <div>
+      <ul>
+        {filteredItems.map((item) => <li>{item.timestamp.toLocaleDateString()} - {item.title} - {item.activity}</li>) }
+      </ul>
       <label>
         Timeframe:
         <select onChange={(e) => setTimeframe(e.target.value as Timeframe)} style={{marginLeft: '1em', marginTop: '1em'}}>

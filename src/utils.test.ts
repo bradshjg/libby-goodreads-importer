@@ -74,8 +74,7 @@ test('filters events outside timeframe', () => {
   expect(
     transformCSV([
       libbyData('some-isbn', 'Borrowed', '', twoMonthsAgo),
-    ],
-    'last-month')
+    ])
 ).toEqual(
     []
   )
