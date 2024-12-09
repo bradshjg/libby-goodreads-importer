@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/libby-goodreads-importer/static/css/main.e6c13ad2.css",
-    "main.js": "/libby-goodreads-importer/static/js/main.107523c8.js",
+    "main.css": "/libby-goodreads-importer/static/css/main.e428eaaa.css",
+    "main.js": "/libby-goodreads-importer/static/js/main.34efd5ed.js",
     "index.html": "/libby-goodreads-importer/index.html",
     "static/media/logo.svg": "/libby-goodreads-importer/static/media/logo.67a128a70b4eaa20f68b805e7ef71e42.svg",
-    "main.e6c13ad2.css.map": "/libby-goodreads-importer/static/css/main.e6c13ad2.css.map",
-    "main.107523c8.js.map": "/libby-goodreads-importer/static/js/main.107523c8.js.map"
+    "main.e428eaaa.css.map": "/libby-goodreads-importer/static/css/main.e428eaaa.css.map",
+    "main.34efd5ed.js.map": "/libby-goodreads-importer/static/js/main.34efd5ed.js.map"
   },
   "entrypoints": [
-    "static/css/main.e6c13ad2.css",
-    "static/js/main.107523c8.js"
+    "static/css/main.e428eaaa.css",
+    "static/js/main.34efd5ed.js"
   ]
 }
