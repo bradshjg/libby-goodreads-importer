@@ -1,5 +1,6 @@
 import React from 'react'
-import {GenericItem, type Timeframe} from './types'
+import {ExportTable} from './ExportTable'
+import {GenericItem} from './types'
 import {generateCSV, filterActivities} from './utils'
 
 interface EditUploadProps {
@@ -8,13 +9,13 @@ interface EditUploadProps {
 }
 
 export const EditUpload = ({items, onClose}: EditUploadProps) => {
-  const [timeframe, setTimeframe] = React.useState('all-time' as Timeframe)
+  const [recencyFilter, setRecencyFilter] = React.useState(6) // defaults to past 6 months
 
   const filteredItems = React.useMemo(
     () => {
-      return filterActivities(items, timeframe)
+      return filterActivities(items, recencyFilter)
     },
-    [items, timeframe],
+    [items, recencyFilter],
   )
   
   const startDownload = (goodreadsExport: string) => {
@@ -32,20 +33,17 @@ export const EditUpload = ({items, onClose}: EditUploadProps) => {
   }
 
   return (
-    <div>
-      <ul>
-        {filteredItems.map((item) => <li>{item.timestamp.toLocaleDateString()} - {item.title} - {item.activity}</li>) }
-      </ul>
-      <label>
-        Timeframe:
-        <select onChange={(e) => setTimeframe(e.target.value as Timeframe)} style={{marginLeft: '1em', marginTop: '1em'}}>
-          <option value='all-time'>All time</option>
-          <option value='last-year'>Last year</option>
-          <option value='last-month'>Last month</option>
-        </select>
-      </label>
-      <button onClick={exportCSV} style={{marginTop: '1em'}}>Download goodreads CSV</button>
-      <button onClick={onClose}>Close</button>
-    </div>
+    <>
+      <div style={{display: 'flex', justifyContent: 'space-evenly', width: '80%', margin: '2em auto'}}>
+        <label>
+          Filter: Past
+          <input type="number" min="1" step="1" style={{width: "2.5em", margin: "auto .5em"}}onChange={(e) => setRecencyFilter(parseInt(e.target.value, 10))} />
+          months
+        </label>
+        <button onClick={exportCSV}>Download goodreads CSV</button>
+        <button onClick={onClose}>Back</button>
+      </div>
+      <ExportTable items={filteredItems} />
+    </>
   )
 }

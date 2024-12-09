@@ -21,7 +21,7 @@ export default function ConversionForm() {
   return (
     <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
       { libbyImport ?
-        <EditUpload key={libbyImport?.file.name} items={libbyImport.items} onClose={() => onFileChange(undefined)} />
+        <EditUpload key={libbyImport.file.name} items={libbyImport.items} onClose={() => onFileChange(undefined)} />
         :
         <FileUpload onFileChange={onFileChange} />
       }

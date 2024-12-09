@@ -1,5 +1,5 @@
 import {timeFormat} from 'd3-time-format'
-import {GoodreadsExportItem, LibbyImportItem, Shelf} from './types'
+import {GoodreadsExportItem, LibbyImportItem, TShelf} from './types'
 import {transformCSV} from './utils'
 
 const libbyData = (isbn: string, activity: string, details: string, date: Date): LibbyImportItem => {
@@ -15,7 +15,7 @@ const libbyData = (isbn: string, activity: string, details: string, date: Date):
   }
 }
 
-const goodreadsData = (isbn: string, shelves: Shelf, dateAdded: Date | undefined, dateRead: Date | undefined): GoodreadsExportItem => {
+const goodreadsData = (isbn: string, shelves: TShelf, dateAdded: Date | undefined, dateRead: Date | undefined): GoodreadsExportItem => {
   const dateFormatter = timeFormat('%Y-%m-%d')
   return {
     Title: 'test-title',

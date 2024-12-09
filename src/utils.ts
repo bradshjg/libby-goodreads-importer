@@ -1,7 +1,7 @@
 import {parse} from 'csv-parse/browser/esm/sync'
 import {stringify} from 'csv-stringify/browser/esm/sync'
 import {timeFormat, timeParse} from 'd3-time-format'
-import {Activity, GenericItem, GoodreadsExportItem, LibbyImportItem, Timeframe} from './types'
+import {Activity, GenericItem, GoodreadsExportItem, LibbyImportItem} from './types'
 
 export const readFile = (file: File) => {
     return new Promise((resolve, reject) => {
@@ -21,24 +21,6 @@ export const parseCSV = async (importFile: File) => {
 
 const dateParser = timeParse('%B %d, %Y %H:%M')
 const dateFormatter = timeFormat('%Y-%m-%d')
-
-const getCutoffDate = (timeframe: Timeframe) => {
-  let cutoff: Date | undefined = new Date()
-  switch(timeframe) {
-    case 'all-time':
-      cutoff = undefined
-      break;
-    case 'last-year':
-      cutoff.setDate(cutoff.getDate() - 365)
-      break;
-    case 'last-month':
-      cutoff.setMonth(cutoff.getMonth() - 1)
-      break;
-    default:
-      cutoff = undefined
-  }
-  return cutoff
-}
 
 const getActivity = (libbyItem: LibbyImportItem): Activity | undefined => {
   let activity: Activity | undefined
@@ -106,9 +88,10 @@ export const transformCSV = (libbyImportItems: LibbyImportItem[]): GenericItem[]
   return lastEventGenericItems
   }
 
-export const filterActivities = (genericItems: GenericItem[], timeframe: Timeframe) => {
-  const cutoffDate = getCutoffDate(timeframe)
-  return !!cutoffDate ? genericItems.filter((item) => item.timestamp > cutoffDate) : genericItems
+export const filterActivities = (genericItems: GenericItem[], recencyFilter: number) => {
+  const cutoffDate = new Date()
+  cutoffDate.setMonth(cutoffDate.getMonth() - recencyFilter)
+  return genericItems.filter((item) => item.timestamp > cutoffDate)
 }
 
 export const generateCSV = (genericItems: GenericItem[]) => {

@@ -57,9 +57,11 @@ export const FileUpload = ({onFileChange}: FileUploadProps) => {
 
   return (
     <>
-      <header style={{display: 'flex', justifyContent: 'center'}}>
+      <header style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center'}}>
         <img src={logo} alt="logo" style={{width: '200px', height: '200px'}} />
+        <a href="https://github.com/bradshjg/libby-goodreads-importer">Source/Docs</a>
       </header>
+      <h1 style={{marginBottom: '0'}}>Instructions</h1>
       <ol>
         <li><a href="https://help.libbyapp.com/en-us/6207.htm">Download Libby activity CSV</a></li>
         <li>Convert to goodreads format (below)</li>

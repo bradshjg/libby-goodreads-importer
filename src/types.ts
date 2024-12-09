@@ -23,7 +23,13 @@ export interface GenericItem {
   isbn: string,
 }
 
-export type Shelf = 'to-read' | 'currently-reading' | 'read'
+export const Shelf = {
+  ToRead: 'to-read',
+  CurrentlyReading: 'currently-reading',
+  Read: 'read'
+} as const
+
+export type TShelf = typeof Shelf[keyof typeof Shelf]
 
 export interface GoodreadsExportItem {
   Title: string
@@ -32,7 +38,5 @@ export interface GoodreadsExportItem {
   ISBN: string
   "Date Added": string
   "Date Read": string
-  Shelves: Shelf
+  Shelves: TShelf
 }
-
-export type Timeframe = 'all-time' | 'last-month' | 'last-year'
