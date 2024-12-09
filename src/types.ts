@@ -3,27 +3,32 @@ export interface LibbyImportItem {
   author: string,
   publisher: string,
   isbn: string,
+  timestamp: Date
   activity: string
-  timestamp: string
-  details?: string
-}
-
-export enum Activity {
-  ToRead = 'to-read',
-  CurrentlyReading = 'currently-reading',
-  Read = 'read',
+  details: string
 }
 
 export interface GenericItem {
   timestamp: Date,
-  activity: Activity,
+  activity: TShelf,
   title: string,
   author: string,
   publisher: string,
   isbn: string,
 }
 
-export type Shelf = 'to-read' | 'currently-reading' | 'read'
+export interface GenericExportItem extends GenericItem {
+  selected: boolean
+  filtered: boolean
+}
+
+export const Shelf = {
+  ToRead: 'to-read',
+  CurrentlyReading: 'currently-reading',
+  Read: 'read'
+} as const
+
+export type TShelf = typeof Shelf[keyof typeof Shelf]
 
 export interface GoodreadsExportItem {
   Title: string
@@ -32,7 +37,5 @@ export interface GoodreadsExportItem {
   ISBN: string
   "Date Added": string
   "Date Read": string
-  Shelves: Shelf
+  Shelves: TShelf
 }
-
-export type Timeframe = 'all-time' | 'last-month' | 'last-year'
