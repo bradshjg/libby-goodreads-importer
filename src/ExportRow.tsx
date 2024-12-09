@@ -8,12 +8,12 @@ interface ExportRowProps {
 
 export const ExportRow = ({item, toggleSelection, updateActivity}: ExportRowProps) => {
   return (
-    <tr>
-      <td><input type="checkbox" checked={item.selected} onChange={() => toggleSelection(item.isbn)} /></td>
+    <tr onClick={() => toggleSelection(item.isbn)}>
+      <td><input type="checkbox" checked={item.selected} /></td>
       <td>{item.timestamp.toLocaleDateString()}</td>
       <td>{item.title}</td>
       <td>{item.author}</td>
-      <td>
+      <td onClick={(e) => e.stopPropagation()}>
         <select value={item.activity} onChange={(e) => updateActivity(item.isbn, e.target.value)}>
           {Object.values(Shelf).map((shelf) => <option key={shelf}>{shelf}</option>)}
         </select>
