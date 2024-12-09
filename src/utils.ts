@@ -88,12 +88,6 @@ export const transformCSV = (libbyImportItems: LibbyImportItem[]): GenericItem[]
   return lastEventGenericItems
   }
 
-export const filterActivities = (genericItems: GenericItem[], recencyFilter: number) => {
-  const cutoffDate = new Date()
-  cutoffDate.setMonth(cutoffDate.getMonth() - recencyFilter)
-  return genericItems.filter((item) => item.timestamp > cutoffDate)
-}
-
 export const generateCSV = (genericItems: GenericItem[]) => {
     return stringify(
       genericItems.map(getGoodReadsItem),

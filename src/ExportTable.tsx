@@ -1,22 +1,35 @@
+import React from 'react'
 import {ExportRow} from './ExportRow'
-import {GenericItem} from './types'
+import {GenericExportItem} from './types'
 
 interface ExportTableProps {
-  items: GenericItem[]
+  items: GenericExportItem[]
+  toggleSelectAll: (mode: 'select' | 'deselect') => void
+  toggleSelection: (isbn: string) => void
+  updateActivity: (isbn: string, activity: string) => void
 }
 
-export const ExportTable = ({items}: ExportTableProps) => {
+export const ExportTable = ({items, toggleSelectAll, toggleSelection, updateActivity}: ExportTableProps) => {
+  const allSelected = !items.some((item) => !item.selected)
+
+  const onSelectAllChange = () => {
+    const mode = allSelected ? 'deselect' : 'select'
+    toggleSelectAll(mode)
+  }
+
   return (
     <table>
       <thead>
-        <th scope="col" aria-label='include in export'></th>
-        <th scope="col">Date</th>
-        <th scope="col">Title</th>
-        <th scope="col">Author</th>
-        <th scope="col">Goodreads shelf</th>
+        <tr>
+          <th scope="col" aria-label='include in export'><input type="checkbox" checked={allSelected} onChange={onSelectAllChange}/></th>
+          <th scope="col">Date</th>
+          <th scope="col">Title</th>
+          <th scope="col">Author</th>
+          <th scope="col">Shelf</th>
+        </tr>
       </thead>
       <tbody>
-        {items.map((item) => <ExportRow item={item} />)}
+        {items.map((item) => <ExportRow key={item.isbn} item={item} toggleSelection={toggleSelection} updateActivity={updateActivity} />)}
       </tbody>
     </table>
   )

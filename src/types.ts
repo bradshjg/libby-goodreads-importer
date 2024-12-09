@@ -23,6 +23,11 @@ export interface GenericItem {
   isbn: string,
 }
 
+export interface GenericExportItem extends GenericItem {
+  selected: boolean
+  filtered: boolean
+}
+
 export const Shelf = {
   ToRead: 'to-read',
   CurrentlyReading: 'currently-reading',
