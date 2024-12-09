@@ -1,4 +1,3 @@
-import React from 'react'
 import {ExportRow} from './ExportRow'
 import {GenericExportItem} from './types'
 

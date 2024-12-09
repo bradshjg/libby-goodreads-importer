@@ -3,20 +3,14 @@ export interface LibbyImportItem {
   author: string,
   publisher: string,
   isbn: string,
+  timestamp: Date
   activity: string
-  timestamp: string
-  details?: string
-}
-
-export enum Activity {
-  ToRead = 'to-read',
-  CurrentlyReading = 'currently-reading',
-  Read = 'read',
+  details: string
 }
 
 export interface GenericItem {
   timestamp: Date,
-  activity: Activity,
+  activity: TShelf,
   title: string,
   author: string,
   publisher: string,

@@ -1,6 +1,6 @@
 import React from 'react'
 import {ExportTable} from './ExportTable'
-import {GenericItem, GenericExportItem, Activity, Shelf} from './types'
+import {GenericItem, GenericExportItem, Shelf, TShelf} from './types'
 import {generateCSV} from './utils'
 
 interface EditUploadProps {
@@ -47,8 +47,8 @@ export const EditUpload = ({items, onClose}: EditUploadProps) => {
     setExportItems(updatedExportItems)
   }
 
-  const isActivity = (activity: string): activity is Activity => {
-    return Object.values(Shelf).includes(activity as Activity)
+  const isActivity = (activity: string): activity is TShelf => {
+    return Object.values(Shelf).includes(activity as TShelf)
   }
 
   const updateActivity = (isbn: string, activity: string) => {
