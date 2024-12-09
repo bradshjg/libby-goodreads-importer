@@ -9,7 +9,7 @@ interface ExportRowProps {
 export const ExportRow = ({item, toggleSelection, updateActivity}: ExportRowProps) => {
   return (
     <tr onClick={() => toggleSelection(item.isbn)}>
-      <td><input type="checkbox" checked={item.selected} /></td>
+      <td><input type="checkbox" checked={item.selected} readOnly={true} /></td>
       <td>{item.timestamp.toLocaleDateString()}</td>
       <td>{item.title}</td>
       <td>{item.author}</td>
